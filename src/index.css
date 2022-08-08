@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Lobster&family=Recursive:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
+
+body {
+  font-family: 'Roboto condensed', sans-serif !important;
+  overflow-x: hidden;
+  background-color: #eee8e4 !important;
+}
+
+.brand {
+  font-family: 'lobster', cursive, monospace;
+}
+
+.card-img {
+  max-width: 300px;
+  padding: 1.5rem;
+  height: auto;
+}
