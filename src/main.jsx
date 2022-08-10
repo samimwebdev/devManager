@@ -14,6 +14,7 @@ import './index.css'
 //search Functionality
 //securely identify the user (Authorization)
 import 'bootstrap/dist/css/bootstrap.min.css'
+import 'react-datepicker/dist/react-datepicker.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
