@@ -1,6 +1,9 @@
 import React from 'react'
 import { Card, ListGroup, Button } from 'react-bootstrap'
 import { FaEye, FaRegTrashAlt } from 'react-icons/fa'
+import { format } from 'date-fns'
+import { toast } from 'react-toastify'
+import { Link } from 'react-router-dom'
 
 export default function Contact({ contact, deleteContact }) {
   const {
@@ -14,6 +17,11 @@ export default function Contact({ contact, deleteContact }) {
     gender,
     dateOfBirth,
   } = contact
+
+  const handleDelete = (id) => {
+    toast.success('contact is deleted successfully')
+    deleteContact(id)
+  }
   return (
     <Card className='mb-3'>
       <div className='d-flex'>
@@ -31,10 +39,15 @@ export default function Contact({ contact, deleteContact }) {
           <ListGroup className='list-group-flush'>
             <ListGroup.Item>Gender: {gender}</ListGroup.Item>
             <ListGroup.Item> Email: {email}</ListGroup.Item>
-            <ListGroup.Item>Date of Birth: {dateOfBirth}</ListGroup.Item>
+            <ListGroup.Item>
+              Date of Birth:{' '}
+              {dateOfBirth instanceof Object
+                ? format(dateOfBirth, 'dd/MM/yyyy')
+                : dateOfBirth}
+            </ListGroup.Item>
           </ListGroup>
           <div className='card-btn mt-3'>
-            <Card.Link>
+            <Card.Link as={Link} to={`/contacts/${id}`}>
               <Button variant='warning ms-3' size='md' type='view'>
                 <FaEye />
               </Button>
@@ -43,7 +56,7 @@ export default function Contact({ contact, deleteContact }) {
               <Button
                 variant='danger ms-3'
                 size='md'
-                onClick={() => deleteContact(id)}
+                onClick={() => handleDelete(id)}
               >
                 <FaRegTrashAlt />
               </Button>
