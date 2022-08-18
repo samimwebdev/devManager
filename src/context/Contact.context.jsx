@@ -1,17 +1,7 @@
-import { useState, useContext } from 'react'
-import Contacts from './pages/Contacts'
-import Header from './layouts/Header'
-import { Container } from 'react-bootstrap'
-import AddContact from './pages/AddContact'
+import { createContext, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { ToastContainer } from 'react-toastify'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Home from './pages/Home'
-import Register from './pages/Register'
-import Login from './pages/Login'
-import NotFound from './pages/NotFound'
-import EditContact from './pages/EditContact'
-import ContactDetails from './pages/ContactDetails'
+//create context
+export const ContactContext = createContext()
 
 const initialContacts = [
   {
@@ -94,41 +84,47 @@ const initialContacts = [
   },
 ]
 
-function App() {
-  return (
-    <>
-      <ToastContainer
-        position='top-right'
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-      <BrowserRouter>
-        <Header />
+export const ContactProvider = ({ children }) => {
+  const [contacts, setContacts] = useState(initialContacts)
 
-        <Container
-          style={{ width: '800px', margin: '0 auto' }}
-          className='pt-3'
-        >
-          <Routes>
-            <Route index element={<Home />} />
-            <Route path='/contacts' element={<Contacts />} />
-            <Route path='/add-contact' element={<AddContact />} />
-            <Route path='/contacts/:id' element={<ContactDetails />} />
-            <Route path='/edit-contact/:id' element={<EditContact />} />
-            <Route path='/register' element={<Register />} />
-            <Route path='/login' element={<Login />} />
-            <Route path='*' element={<NotFound />} />
-          </Routes>
-        </Container>
-      </BrowserRouter>
-    </>
+  const deleteContact = (id) => {
+    const updatedContacts = contacts.filter((contact) => contact.id !== id)
+
+    setContacts(updatedContacts)
+  }
+
+  const updateContact = (contactToUpdate, id) => {
+    //update state
+    const contactsWithUpdate = contacts.map((contact) => {
+      if (contact.id === id) {
+        //update
+        return {
+          id,
+          ...contactToUpdate,
+        }
+      } else {
+        return contact
+      }
+    })
+
+    setContacts(contactsWithUpdate)
+  }
+
+  const addContact = (contact) => {
+    let contactToAdd = {
+      id: uuidv4(),
+      ...contact,
+    }
+    setContacts([contactToAdd, ...contacts])
+  }
+
+  const value = {
+    contacts,
+    addContact,
+    updateContact,
+    deleteContact,
+  }
+  return (
+    <ContactContext.Provider value={value}>{children}</ContactContext.Provider>
   )
 }
-
-export default App

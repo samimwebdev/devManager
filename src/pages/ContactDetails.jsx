@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Card, Button, ListGroup } from 'react-bootstrap'
 import { FaPencilAlt, FaRegTrashAlt } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import { format } from 'date-fns'
+import { ContactContext } from '../context/Contact.context'
 
-function ContactDetails({ contacts, deleteContact }) {
+function ContactDetails() {
+  const { contacts, deleteContact } = useContext(ContactContext)
   const [contact, setContact] = useState({})
   const navigate = useNavigate()
   const { id } = useParams()

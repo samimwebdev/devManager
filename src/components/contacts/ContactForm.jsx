@@ -6,6 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import FormTextInput from '../../layouts/FormTextInput'
 
 const schema = yup
   .object({
@@ -111,68 +112,32 @@ function ContactForm({ addContact, updateContact, contact }) {
         {contact?.id ? 'Edit Contact' : 'Add Contact'}
       </h2>
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <Form.Group as={Row} className='mb-3'>
-          <Col sm={3}>
-            <Form.Label htmlFor='firstName' column>
-              First Name
-            </Form.Label>
-          </Col>
-          <Col sm={9}>
-            <Form.Control
-              type='text'
-              id='firstName'
-              defaultValue={firstName}
-              {...register('firstName')}
-              isInvalid={errors?.firstName}
-              placeholder='Enter Your First Name'
-            />
-            <Form.Control.Feedback type='invalid' className='d-block'>
-              {errors?.firstName?.message}
-            </Form.Control.Feedback>
-          </Col>
-        </Form.Group>
-        <Form.Group as={Row} className='mb-3'>
-          <Col sm={3}>
-            <Form.Label htmlFor='lastName' column>
-              Last Name
-            </Form.Label>
-          </Col>
-          <Col sm={9}>
-            <Form.Control
-              type='text'
-              id='lastName'
-              name='lastName'
-              defaultValue={lastName}
-              {...register('lastName')}
-              isInvalid={errors?.lastName}
-              placeholder='Enter Your Last Name'
-            />
-            <Form.Control.Feedback type='invalid' className='d-block'>
-              {errors?.lastName?.message}
-            </Form.Control.Feedback>
-          </Col>
-        </Form.Group>
-        <Form.Group as={Row} className='mb-3'>
-          <Col sm={3}>
-            <Form.Label htmlFor='email' column>
-              Email
-            </Form.Label>
-          </Col>
-          <Col sm={9}>
-            <Form.Control
-              type='email'
-              id='email'
-              name='email'
-              defaultValue={email}
-              {...register('email')}
-              isInvalid={errors?.email}
-              placeholder='Enter Your Email'
-            />
-            <Form.Control.Feedback type='invalid' className='d-block'>
-              {errors?.email?.message}
-            </Form.Control.Feedback>
-          </Col>
-        </Form.Group>
+        <FormTextInput
+          name='firstName'
+          label='First Name'
+          placeholder='Enter Your First Name'
+          errors={errors}
+          register={register}
+          defaultValue={firstName}
+        />
+        <FormTextInput
+          name='lastName'
+          label='Last Name'
+          placeholder='Enter Your Last Name'
+          errors={errors}
+          register={register}
+          defaultValue={lastName}
+        />
+
+        <FormTextInput
+          name='email'
+          label='Email'
+          type='email'
+          placeholder='Enter Your Email'
+          errors={errors}
+          register={register}
+          defaultValue={email}
+        />
         <Form.Group as={Row} className='mb-3'>
           <Col sm={3}>
             <Form.Label htmlFor='profession' column>
@@ -200,27 +165,15 @@ function ContactForm({ addContact, updateContact, contact }) {
             </Form.Control.Feedback>
           </Col>
         </Form.Group>
-        <Form.Group as={Row} className='mb-3'>
-          <Col sm={3}>
-            <Form.Label htmlFor='image' column>
-              Profile Picture
-            </Form.Label>
-          </Col>
-          <Col sm={9}>
-            <Form.Control
-              type='text'
-              id='image'
-              name='image'
-              defaultValue={image}
-              {...register('image')}
-              isInvalid={errors?.image}
-              placeholder='Enter Your profile picture Url'
-            />
-            <Form.Control.Feedback type='invalid' className='d-block'>
-              {errors?.image?.message}
-            </Form.Control.Feedback>
-          </Col>
-        </Form.Group>
+        <FormTextInput
+          name='image'
+          label='Profile Picture'
+          type='url'
+          placeholder='Enter Profile picture URL'
+          errors={errors}
+          register={register}
+          defaultValue={image}
+        />
         <Form.Group as={Row} className='mb-3'>
           <Col sm={3}>
             <Form.Label htmlFor='dateOfBirth' column>
@@ -267,26 +220,16 @@ function ContactForm({ addContact, updateContact, contact }) {
             {errors?.gender?.message}
           </Form.Control.Feedback>
         </Form.Group>
-        <Form.Group as={Row} className='mb-3'>
-          <Col sm={3}>
-            <Form.Label htmlFor='firstName' column>
-              Bio
-            </Form.Label>
-          </Col>
-          <Col sm={9}>
-            <Form.Control
-              as='textarea'
-              type='text'
-              defaultValue={bio}
-              {...register('bio')}
-              isInvalid={errors?.bio}
-              placeholder='Enter Your Bio'
-            />
-            <Form.Control.Feedback type='invalid' className='d-block'>
-              {errors?.bio?.message}
-            </Form.Control.Feedback>
-          </Col>
-        </Form.Group>
+
+        <FormTextInput
+          name='bio'
+          label='Bio'
+          placeholder='Enter Your Bio'
+          errors={errors}
+          register={register}
+          defaultValue={bio}
+          as='textarea'
+        />
         <Button
           variant='primary'
           size='md'
