@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Navbar, Nav, Form, Button, Container } from 'react-bootstrap'
 import { NavLink, Link } from 'react-router-dom'
+import { AuthContext } from '../context/Auth.Context'
 
 function Header() {
+  const { logout, user } = useContext(AuthContext)
   return (
     <Navbar bg='light' expand='lg'>
       <Container>
@@ -16,18 +18,27 @@ function Header() {
             style={{ maxHeight: '100px' }}
             navbarScroll
           >
-            <Nav.Link as={NavLink} to='/contacts'>
-              Contacts
-            </Nav.Link>
-            <Nav.Link as={NavLink} to='/add-contact'>
-              Add Contact
-            </Nav.Link>
-            <Nav.Link as={NavLink} to='/register'>
-              Register
-            </Nav.Link>
-            <Nav.Link as={NavLink} to='/login'>
-              Login
-            </Nav.Link>
+            {user && (
+              <>
+                <Nav.Link as={NavLink} to='/contacts'>
+                  Contacts
+                </Nav.Link>
+                <Nav.Link as={NavLink} to='/add-contact'>
+                  Add Contact
+                </Nav.Link>
+                <Nav.Link onClick={logout}>Logout</Nav.Link>
+              </>
+            )}
+            {!user && (
+              <>
+                <Nav.Link as={NavLink} to='/register'>
+                  Register
+                </Nav.Link>
+                <Nav.Link as={NavLink} to='/login'>
+                  Login
+                </Nav.Link>
+              </>
+            )}
           </Nav>
           <Form className='d-flex'>
             <Form.Control

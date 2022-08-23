@@ -67,10 +67,20 @@ function ContactForm({ addContact, updateContact, contact }) {
     dateOfBirth: contact?.dateOfBirth || new Date(),
   }
 
-  const { firstName, lastName, email, gender, profession, bio, image } =
-    defaultValue
+  const {
+    firstName,
+    lastName,
+    email,
+    gender,
+    profession,
+    bio,
+    image,
+    dateOfBirth,
+  } = defaultValue
 
-  const [birthYear, setBirthYear] = useState(new Date())
+  const [birthYear, setBirthYear] = useState(
+    dateOfBirth ? dateOfBirth : new Date()
+  )
 
   useEffect(() => {
     if (isSubmitSuccessful) {

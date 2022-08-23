@@ -1,5 +1,8 @@
-import { createContext, useState } from 'react'
-import { v4 as uuidv4 } from 'uuid'
+import { createContext, useReducer, useState } from 'react'
+
+import contactsReducer from './reducer'
+import { DELETE_CONTACT, ADD_CONTACT, UPDATE_CONTACT } from './types'
+
 //create context
 export const ContactContext = createContext()
 
@@ -12,7 +15,7 @@ const initialContacts = [
     profession: 'Web Developer',
     gender: 'female',
     image: 'https://randomuser.me/api/portraits/women/75.jpg',
-    dateOfBirth: '05/11/2021',
+    dateOfBirth: new Date(),
     bio: 'All About me',
   },
   {
@@ -23,7 +26,7 @@ const initialContacts = [
     profession: 'Software Developer',
     gender: 'male',
     image: 'https://randomuser.me/api/portraits/men/75.jpg',
-    dateOfBirth: '04/04/2022',
+    dateOfBirth: new Date(),
     bio: 'All About me',
   },
   {
@@ -35,7 +38,7 @@ const initialContacts = [
 
     gender: 'male',
     image: 'https://randomuser.me/api/portraits/men/78.jpg',
-    dateOfBirth: '17/05/2022',
+    dateOfBirth: new Date(),
     bio: 'All About me',
   },
   {
@@ -46,7 +49,7 @@ const initialContacts = [
     profession: 'Data entry specialist',
     gender: 'female',
     image: 'https://randomuser.me/api/portraits/women/80.jpg',
-    dateOfBirth: '30/07/2022',
+    dateOfBirth: new Date(),
     bio: 'All About me',
   },
   {
@@ -57,7 +60,7 @@ const initialContacts = [
     gender: 'male',
     profession: 'Data scientist',
     image: 'https://randomuser.me/api/portraits/men/56.jpg',
-    dateOfBirth: '21/03/2022',
+    dateOfBirth: new Date(),
     bio: 'All About me',
   },
   {
@@ -68,7 +71,7 @@ const initialContacts = [
     profession: 'python Developer',
     gender: 'female',
     image: 'https://randomuser.me/api/portraits/women/81.jpg',
-    dateOfBirth: '16/01/2022',
+    dateOfBirth: new Date(),
     bio: 'All About me',
   },
   {
@@ -79,43 +82,24 @@ const initialContacts = [
     gender: 'male',
     profession: 'CPA Marketer',
     image: 'https://randomuser.me/api/portraits/men/80.jpg',
-    dateOfBirth: '05/02/2022',
+    dateOfBirth: new Date(),
     bio: 'All About me',
   },
 ]
 
 export const ContactProvider = ({ children }) => {
-  const [contacts, setContacts] = useState(initialContacts)
+  const [contacts, dispatch] = useReducer(contactsReducer, initialContacts)
 
   const deleteContact = (id) => {
-    const updatedContacts = contacts.filter((contact) => contact.id !== id)
-
-    setContacts(updatedContacts)
+    dispatch({ type: DELETE_CONTACT, payload: id })
   }
 
   const updateContact = (contactToUpdate, id) => {
-    //update state
-    const contactsWithUpdate = contacts.map((contact) => {
-      if (contact.id === id) {
-        //update
-        return {
-          id,
-          ...contactToUpdate,
-        }
-      } else {
-        return contact
-      }
-    })
-
-    setContacts(contactsWithUpdate)
+    dispatch({ type: UPDATE_CONTACT, payload: { id, contactToUpdate } })
   }
 
   const addContact = (contact) => {
-    let contactToAdd = {
-      id: uuidv4(),
-      ...contact,
-    }
-    setContacts([contactToAdd, ...contacts])
+    dispatch({ type: ADD_CONTACT, payload: contact })
   }
 
   const value = {
