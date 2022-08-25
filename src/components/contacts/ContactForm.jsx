@@ -54,8 +54,6 @@ function ContactForm({ addContact, updateContact, contact }) {
     resolver: yupResolver(schema),
   })
 
-  const navigate = useNavigate()
-
   const defaultValue = {
     firstName: contact?.firstName || 'samim',
     lastName: contact?.lastName || 'Hasan',
@@ -109,11 +107,8 @@ function ContactForm({ addContact, updateContact, contact }) {
       updateContact(data, id)
     } else {
       //show flash message
-      toast.success('contact is Added Successfully')
       addContact(data)
     }
-
-    navigate('/contacts')
   }
 
   return (

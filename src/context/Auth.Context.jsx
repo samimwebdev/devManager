@@ -1,7 +1,7 @@
 import { createContext, useState } from 'react'
 import { axiosPublicInstance } from '../config/axios'
 import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 export const AuthContext = createContext()
 const loadedUser = JSON.parse(localStorage.getItem('user'))
@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(loadedUser ? loadedUser : null)
   const [token, setToken] = useState(loadedToken ? loadedToken : null)
   const navigate = useNavigate()
-
+  const location = useLocation()
   const registerUser = async (data) => {
     try {
       const response = await axiosPublicInstance.post(
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
       toast.success('Login successfully redirecting...')
 
       //Redirecting the user
-      navigate('/contacts')
+      navigate(location?.state?.from ? location?.state?.from : '/contacts')
     } catch (err) {
       toast.error(err.response?.data?.error?.message)
     }

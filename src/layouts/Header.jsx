@@ -26,6 +26,9 @@ function Header() {
                 <Nav.Link as={NavLink} to='/add-contact'>
                   Add Contact
                 </Nav.Link>
+                <Nav.Link as={NavLink} to='/dashboard'>
+                  Dashboard
+                </Nav.Link>
                 <Nav.Link onClick={logout}>Logout</Nav.Link>
               </>
             )}

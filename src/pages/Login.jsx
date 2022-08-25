@@ -24,7 +24,6 @@ function Login() {
   const { login } = useContext(AuthContext)
 
   const onSubmit = (data) => {
-    console.log(data)
     //registering user
     login({
       identifier: data.email,
@@ -34,7 +33,7 @@ function Login() {
 
   return (
     <>
-      <h2 className='text-center mb-3'>Register</h2>
+      <h2 className='text-center mb-3'>Login</h2>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <FormTextInput
           name='email'

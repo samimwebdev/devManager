@@ -21,7 +21,6 @@ export default function Contact({ contact }) {
   } = contact
 
   const handleDelete = (id) => {
-    toast.success('contact is deleted successfully')
     deleteContact(id)
   }
   return (
