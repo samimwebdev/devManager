@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid'
 import {
   LOAD_CONTACTS,
   ADD_CONTACT,
@@ -17,16 +16,14 @@ const contactsReducer = (state, action) => {
 
     case ADD_CONTACT:
       const newContact = {
-        id: uuidv4(),
         ...payload,
       }
       return [newContact, ...state]
 
     case UPDATE_CONTACT:
-      const { id, contactToUpdate } = payload
+      const { id, contact: contactToUpdate } = payload
       const contacts = state.map((contact) => {
         if (contact.id === id) {
-          //update
           return {
             id,
             ...contactToUpdate,

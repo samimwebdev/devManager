@@ -5,9 +5,11 @@ import { format } from 'date-fns'
 import { toast } from 'react-toastify'
 import { Link } from 'react-router-dom'
 import { ContactContext } from '../../context/Contact.context'
+import { AuthContext } from '../../context/Auth.Context'
 
 export default function Contact({ contact }) {
   const { deleteContact } = useContext(ContactContext)
+  const { user } = useContext(AuthContext)
   const {
     id,
     firstName,
@@ -19,6 +21,8 @@ export default function Contact({ contact }) {
     gender,
     dateOfBirth,
   } = contact
+
+  const isOwner = user.id === contact?.author?.data?.id
 
   const handleDelete = (id) => {
     deleteContact(id)
@@ -53,15 +57,17 @@ export default function Contact({ contact }) {
                 <FaEye />
               </Button>
             </Card.Link>
-            <Card.Link>
-              <Button
-                variant='danger ms-3'
-                size='md'
-                onClick={() => handleDelete(id)}
-              >
-                <FaRegTrashAlt />
-              </Button>
-            </Card.Link>
+            {isOwner && (
+              <Card.Link>
+                <Button
+                  variant='danger ms-3'
+                  size='md'
+                  onClick={() => handleDelete(id)}
+                >
+                  <FaRegTrashAlt />
+                </Button>
+              </Card.Link>
+            )}
           </div>
         </Card.Body>
       </div>

@@ -117,7 +117,7 @@ export const ContactProvider = ({ children }) => {
   }, [])
   const loadContacts = async () => {
     try {
-      const response = await axiosPrivateInstance.get('/contacts')
+      const response = await axiosPrivateInstance.get('/contacts?populate=*')
       const loadedContacts = response.data.data.map((contact) =>
         formateContact(contact)
       )
@@ -144,17 +144,33 @@ export const ContactProvider = ({ children }) => {
     }
   }
 
-  const updateContact = (contactToUpdate, id) => {
-    dispatch({ type: UPDATE_CONTACT, payload: { id, contactToUpdate } })
+  const updateContact = async (contactToUpdate, id) => {
+    try {
+      //send request to the server
+      //successful response
+      const response = await axiosPrivateInstance.put(
+        `/contacts/${id}?populate=*`,
+        {
+          data: contactToUpdate,
+        }
+      )
+
+      const contact = formateContact(response.data.data)
+      //dispatch here
+      dispatch({ type: UPDATE_CONTACT, payload: { id: contact.id, contact } })
+
+      //toast message
+      toast.success('contact is updated Successfully')
+      //redirect to contacts
+      navigate(`/contacts/${contact.id}`)
+    } catch (err) {
+      toast.error(err.response?.data?.error?.message)
+    }
   }
 
   const addContact = async (contactData) => {
-    contactData = {
-      author: user.id,
-      ...contactData,
-    }
     try {
-      const response = await axiosPrivateInstance.post('/contacts', {
+      const response = await axiosPrivateInstance.post('/contacts?populate=*', {
         data: contactData,
       })
 
