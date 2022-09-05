@@ -1,5 +1,5 @@
-import { createContext, useState } from 'react'
-import { axiosPublicInstance } from '../config/axios'
+import { createContext, useState, useEffect } from 'react'
+import { axiosPrivateInstance, axiosPublicInstance } from '../config/axios'
 import { toast } from 'react-toastify'
 import { useNavigate, useLocation } from 'react-router-dom'
 
@@ -9,6 +9,9 @@ const loadedToken = JSON.parse(localStorage.getItem('token'))
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(loadedUser ? loadedUser : null)
+  const [triggerDelete, setTriggerDelete] = useState(false)
+  const [userContacts, setUserContacts] = useState(null)
+  const [loaded, setLoaded] = useState(false)
   const [token, setToken] = useState(loadedToken ? loadedToken : null)
   const navigate = useNavigate()
   const location = useLocation()
@@ -33,6 +36,28 @@ export const AuthProvider = ({ children }) => {
       navigate('/contacts')
     } catch (err) {
       toast.error(err.response?.data?.error?.message)
+    }
+  }
+
+  useEffect(() => {
+    if (token) {
+      ;(async () => {
+        await loadUserContact()
+      })()
+    }
+  }, [token, triggerDelete])
+
+  const loadUserContact = async () => {
+    try {
+      const response = await axiosPrivateInstance(token).get(
+        '/users/me?populate=contacts'
+      )
+      console.log(response.data)
+      setUserContacts(response.data.contacts)
+      setLoaded(true)
+    } catch (err) {
+      console.log(err.response)
+      setLoaded(true)
     }
   }
 
@@ -71,6 +96,9 @@ export const AuthProvider = ({ children }) => {
   }
 
   const value = {
+    setTriggerDelete,
+    userContacts,
+    loaded,
     registerUser,
     login,
     logout,

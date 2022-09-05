@@ -107,17 +107,21 @@ const initialContacts = [
 export const ContactProvider = ({ children }) => {
   const [contacts, dispatch] = useReducer(contactsReducer, initialContacts)
   const [loaded, setLoaded] = useState(false)
-  const { user } = useContext(AuthContext)
+  const { token } = useContext(AuthContext)
   const navigate = useNavigate()
 
   useEffect(() => {
-    ;(async () => {
-      await loadContacts()
-    })()
-  }, [])
+    if (token) {
+      ;(async () => {
+        await loadContacts()
+      })()
+    }
+  }, [token])
   const loadContacts = async () => {
     try {
-      const response = await axiosPrivateInstance.get('/contacts?populate=*')
+      const response = await axiosPrivateInstance(token).get(
+        '/contacts?populate=*'
+      )
       const loadedContacts = response.data.data.map((contact) =>
         formateContact(contact)
       )
@@ -137,7 +141,7 @@ export const ContactProvider = ({ children }) => {
       //show toast message
       toast.success('Contact is deleted successfully')
       //navigate
-      navigate('/contacts')
+      // navigate('/contacts')
     } catch (err) {
       toast.error(err.response?.data?.error?.message)
       console.log(err.response)

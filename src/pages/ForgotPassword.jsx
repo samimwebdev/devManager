@@ -1,3 +1,4 @@
+import React from 'react'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { Form, Button } from 'react-bootstrap'
@@ -6,13 +7,13 @@ import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import FormTextInput from '../layouts/FormTextInput'
 import { AuthContext } from '../context/Auth.Context'
+import { axiosPublicInstance } from '../config/axios'
+import { toast } from 'react-toastify'
 
 const schema = yup.object({
-  email: yup.string().required('Email is Required'),
-  password: yup.string().required('password is required'),
+  email: yup.string().email().required('Email is Required'),
 })
-
-function Login() {
+function ForgotPassword() {
   const {
     register,
     handleSubmit,
@@ -22,19 +23,25 @@ function Login() {
     resolver: yupResolver(schema),
   })
 
-  const { login } = useContext(AuthContext)
-
-  const onSubmit = (data) => {
-    //registering user
-    login({
-      identifier: data.email,
-      password: data.password,
-    })
+  const onSubmit = async (data) => {
+    try {
+      const response = await axiosPublicInstance.post(
+        '/auth/forgot-password/',
+        {
+          email: data.email,
+        }
+      )
+      console.log(response.data)
+      toast.success('Email is sent successfully with password reset link')
+    } catch (err) {
+      console.log(err.response)
+      toast.success('Error in sending email')
+    }
   }
 
   return (
     <>
-      <h2 className='text-center mb-3'>Login</h2>
+      <h2 className='text-center mb-3'>Forgot Password ?</h2>
       <Form onSubmit={handleSubmit(onSubmit)}>
         <FormTextInput
           name='email'
@@ -44,19 +51,6 @@ function Login() {
           register={register}
           defaultValue='samimfazlu091@gmail.com'
         />
-        <FormTextInput
-          name='password'
-          label='password'
-          placeholder='Enter password'
-          errors={errors}
-          register={register}
-          type='password'
-          defaultValue='abcdeFf1@'
-        />
-        <p>
-          {' '}
-          Forgot Password ? <Link to='/forgot-password'>click here</Link>{' '}
-        </p>
         <Button
           variant='primary'
           size='md'
@@ -64,11 +58,11 @@ function Login() {
           disabled={isSubmitting ? 'disabled' : ''}
           className='text-center d-inline-block w-auto'
         >
-          Login
+          Submit
         </Button>
       </Form>
     </>
   )
 }
 
-export default Login
+export default ForgotPassword
