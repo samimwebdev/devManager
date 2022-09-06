@@ -2,13 +2,15 @@ import { createContext, useState, useEffect } from 'react'
 import { axiosPrivateInstance, axiosPublicInstance } from '../config/axios'
 import { toast } from 'react-toastify'
 import { useNavigate, useLocation } from 'react-router-dom'
-
+import qs from 'qs'
+import { formateContact } from '../utils/formatContact'
 export const AuthContext = createContext()
 const loadedUser = JSON.parse(localStorage.getItem('user'))
 const loadedToken = JSON.parse(localStorage.getItem('token'))
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(loadedUser ? loadedUser : null)
+  const [profileId, setProfileId] = useState(null)
   const [triggerDelete, setTriggerDelete] = useState(false)
   const [userContacts, setUserContacts] = useState(null)
   const [loaded, setLoaded] = useState(false)
@@ -39,6 +41,16 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  //load user profile
+  useEffect(() => {
+    if (token && loaded) {
+      ;(async () => {
+        await loadUserProfile()
+      })()
+    }
+  }, [token, loaded])
+
+  //load user
   useEffect(() => {
     if (token) {
       ;(async () => {
@@ -47,13 +59,48 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token, triggerDelete])
 
-  const loadUserContact = async () => {
+  const loadUserProfile = async () => {
+    const query = qs.stringify(
+      {
+        populate: ['profilePicture', 'user', 'user.contacts'],
+      },
+      {
+        encodeValuesOnly: true,
+      }
+    )
     try {
       const response = await axiosPrivateInstance(token).get(
-        '/users/me?populate=contacts'
+        `/profiles/${profileId}?${query}`
+      )
+      const mappedContacts =
+        response.data.data.attributes.user.data.attributes.contacts.data.map(
+          (contact) => formateContact(contact)
+        )
+      console.log(response.data)
+      setUserContacts(mappedContacts)
+      setLoaded(true)
+    } catch (err) {
+      console.log(err.response)
+      console.log(err)
+      setLoaded(true)
+    }
+  }
+
+  const loadUserContact = async () => {
+    const query = qs.stringify(
+      {
+        populate: ['profile', 'profile.profilePicture', 'contacts'],
+      },
+      {
+        encodeValuesOnly: true,
+      }
+    )
+    try {
+      const response = await axiosPrivateInstance(token).get(
+        `/users/me?${query}`
       )
       console.log(response.data)
-      setUserContacts(response.data.contacts)
+      setProfileId(response.data.profile.id)
       setLoaded(true)
     } catch (err) {
       console.log(err.response)
@@ -104,6 +151,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     user,
     token,
+    profileId,
   }
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

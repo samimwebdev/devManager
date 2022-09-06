@@ -117,6 +117,7 @@ export const ContactProvider = ({ children }) => {
       })()
     }
   }, [token])
+
   const loadContacts = async () => {
     try {
       const response = await axiosPrivateInstance(token).get(

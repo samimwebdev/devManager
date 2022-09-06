@@ -28,34 +28,35 @@ function UserContactList() {
           </tr>
         </thead>
         <tbody>
-          {userContacts.map((userContact) => {
-            return (
-              <tr key={userContact.id}>
-                <td>{userContact.id}</td>
-                <td>{userContact.firstName}</td>
-                <td>{userContact.lastName}</td>
-                <td>{userContact.email}</td>
-                <td>{userContact.profession}</td>
-                <td>
-                  <Button
-                    variant='danger'
-                    onClick={() => handleDelete(userContact.id)}
-                  >
-                    Delete
-                  </Button>
-                </td>
-                <td>
-                  <Button
-                    variant='secondary'
-                    as={Link}
-                    to={`/edit-contact/${userContact.id}`}
-                  >
-                    Edit
-                  </Button>
-                </td>
-              </tr>
-            )
-          })}
+          {userContacts &&
+            userContacts.map((userContact) => {
+              return (
+                <tr key={userContact.id}>
+                  <td>{userContact.id}</td>
+                  <td>{userContact.firstName}</td>
+                  <td>{userContact.lastName}</td>
+                  <td>{userContact.email}</td>
+                  <td>{userContact.profession}</td>
+                  <td>
+                    <Button
+                      variant='danger'
+                      onClick={() => handleDelete(userContact.id)}
+                    >
+                      Delete
+                    </Button>
+                  </td>
+                  <td>
+                    <Button
+                      variant='secondary'
+                      as={Link}
+                      to={`/edit-contact/${userContact.id}`}
+                    >
+                      Edit
+                    </Button>
+                  </td>
+                </tr>
+              )
+            })}
         </tbody>
       </Table>
     )
