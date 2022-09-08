@@ -44,7 +44,7 @@ function ContactDetails() {
       ) : (
         <Card className='mb-3'>
           <div className='d-flex'>
-            <Card.Img className='card-img' src={image} />
+            <Card.Img className='card-img' src={image?.data?.attributes?.url} />
             <Card.Body>
               <Card.Title>
                 <span className='text-dark'>

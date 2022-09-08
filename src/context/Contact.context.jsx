@@ -7,6 +7,8 @@ import {
 } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import qs from 'qs'
+
 import { axiosPrivateInstance } from '../config/axios'
 import { formateContact } from '../utils/formatContact'
 
@@ -107,6 +109,9 @@ const initialContacts = [
 export const ContactProvider = ({ children }) => {
   const [contacts, dispatch] = useReducer(contactsReducer, initialContacts)
   const [loaded, setLoaded] = useState(false)
+  const [pageNumber, setPageNumber] = useState(1)
+  const [pageCount, setPageCount] = useState(null)
+  const [trigger, setTrigger] = useState(false)
   const { token } = useContext(AuthContext)
   const navigate = useNavigate()
 
@@ -116,18 +121,33 @@ export const ContactProvider = ({ children }) => {
         await loadContacts()
       })()
     }
-  }, [token])
+  }, [token, pageNumber, trigger])
 
   const loadContacts = async () => {
+    const query = qs.stringify(
+      {
+        sort: ['id:desc'],
+        populate: '*',
+        pagination: {
+          page: pageNumber,
+          pageSize: import.meta.env.VITE_PAGE_SIZE,
+        },
+      },
+      {
+        encodeValuesOnly: true,
+      }
+    )
     try {
       const response = await axiosPrivateInstance(token).get(
-        '/contacts?populate=*'
+        `/contacts?${query}`
       )
       const loadedContacts = response.data.data.map((contact) =>
         formateContact(contact)
       )
+      console.log(response.data)
       dispatch({ type: LOAD_CONTACTS, payload: loadedContacts })
-
+      //set page count in state
+      setPageCount(response.data.meta.pagination.pageCount)
       setLoaded(true)
     } catch (err) {
       setLoaded(true)
@@ -137,8 +157,12 @@ export const ContactProvider = ({ children }) => {
 
   const deleteContact = async (id) => {
     try {
-      const response = await axiosPrivateInstance.delete(`/contacts/${id}`)
+      const response = await axiosPrivateInstance(token).delete(
+        `/contacts/${id}`
+      )
       dispatch({ type: DELETE_CONTACT, payload: response.data.data.id })
+      //triggering delete event
+      setTrigger(!trigger)
       //show toast message
       toast.success('Contact is deleted successfully')
       //navigate
@@ -153,7 +177,7 @@ export const ContactProvider = ({ children }) => {
     try {
       //send request to the server
       //successful response
-      const response = await axiosPrivateInstance.put(
+      const response = await axiosPrivateInstance(token).put(
         `/contacts/${id}?populate=*`,
         {
           data: contactToUpdate,
@@ -175,13 +199,18 @@ export const ContactProvider = ({ children }) => {
 
   const addContact = async (contactData) => {
     try {
-      const response = await axiosPrivateInstance.post('/contacts?populate=*', {
-        data: contactData,
-      })
+      const response = await axiosPrivateInstance(token).post(
+        '/contacts?populate=*',
+        {
+          data: contactData,
+        }
+      )
 
       const contact = formateContact(response.data.data)
       //dispatch here
       dispatch({ type: ADD_CONTACT, payload: contact })
+      //triggering add contact event
+      setTrigger(!trigger)
       //toast message
       toast.success('contact is Added Successfully')
       //redirect to contacts
@@ -197,6 +226,9 @@ export const ContactProvider = ({ children }) => {
     addContact,
     updateContact,
     deleteContact,
+    pageCount,
+    pageNumber,
+    setPageNumber,
   }
   return (
     <ContactContext.Provider value={value}>{children}</ContactContext.Provider>

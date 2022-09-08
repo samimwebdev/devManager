@@ -20,10 +20,13 @@ import ManagePassword from '../pages/ManagePassword'
 import UserContactList from '../pages/UserContactList'
 import ForgotPassword from '../pages/ForgotPassword'
 import ResetPassword from '../pages/ResetPassword'
+import Search from '../pages/Search'
 
 //Route Guarding
 
 function App() {
+  const [searchInput, setSearchInput] = useState('')
+  console.log(searchInput)
   return (
     <>
       <ToastContainer
@@ -37,12 +40,18 @@ function App() {
         draggable
         pauseOnHover
       />
-
-      <Header />
-
+      <Header setSearchInput={setSearchInput} />
       <Container className='pt-3'>
         <Routes>
           <Route index element={<Home />} />
+          <Route
+            path='/search'
+            element={
+              <PrivateRoute>
+                <Search searchInput={searchInput} />
+              </PrivateRoute>
+            }
+          />
           <Route
             path='/contacts'
             element={

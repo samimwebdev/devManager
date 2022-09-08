@@ -1,10 +1,22 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { Navbar, Nav, Form, Button, Container } from 'react-bootstrap'
-import { NavLink, Link } from 'react-router-dom'
+import { NavLink, Link, useNavigate } from 'react-router-dom'
 import { AuthContext } from '../context/Auth.Context'
 
-function Header() {
+function Header({ setSearchInput }) {
   const { logout, user } = useContext(AuthContext)
+  const navigate = useNavigate()
+  const [text, setText] = useState('')
+
+  const handleSubmit = (evt) => {
+    evt.preventDefault()
+    console.log(text)
+    setSearchInput(text)
+    //navigate to search component
+    setText('')
+    navigate('/search')
+  }
+
   return (
     <Navbar bg='light' expand='lg'>
       <Container>
@@ -43,15 +55,21 @@ function Header() {
               </>
             )}
           </Nav>
-          <Form className='d-flex'>
-            <Form.Control
-              type='search'
-              placeholder='Search'
-              className='me-2'
-              aria-label='Search'
-            />
-            <Button variant='outline-success'>Search</Button>
-          </Form>
+          {user && (
+            <Form onSubmit={handleSubmit} className='d-flex'>
+              <Form.Control
+                type='search'
+                onChange={(evt) => setText(evt.target.value)}
+                value={text}
+                placeholder='Search'
+                className='me-2'
+                aria-label='Search'
+              />
+              <Button type='submit' variant='outline-success'>
+                Search
+              </Button>
+            </Form>
+          )}
         </Navbar.Collapse>
       </Container>
     </Navbar>
